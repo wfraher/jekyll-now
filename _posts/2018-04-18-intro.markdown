@@ -2,7 +2,7 @@
 layout: post
 comments: true
 title:  "Let's learn reinforcement learning! Part 1: Introduction and the Cross Entropy Method"
-excerpt: "This post introduces the topic of reinforcement learning and explains a simple genetic algorithm for reinforcement learning: the cross entropy method. WIP"
+excerpt: "This post introduces the topic of reinforcement learning and explains a simple genetic algorithm for reinforcement learning: the cross entropy method. "
 date:   2018-04-18 11:31:00
 mathjax: true
 ---
@@ -142,9 +142,8 @@ which solved the environment after 15 iterations. CEM, while being simple, can b
 
 If you're interested in reinforcement learning, there are many amazing resources to learn from online. [Berkeley's deep RL bootcamp](https://sites.google.com/view/deep-rl-bootcamp/lectures), [David Silver's course](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html), and [Arthur Juliani's series](https://medium.com/emergent-future/simple-reinforcement-learning-with-tensorflow-part-0-q-learning-with-tables-and-neural-networks-d195264329d0) are all wonderful, to name a few.
 
-If you're interested in my implementation of CEM, [check it out on my github](https://github.com/wfraher/CrossEntropyMethod/blob/master/cem.py).
+If you're interested in my implementation of CEM, [check it out on my github](https://github.com/wfraher/CrossEntropyMethod/blob/master/cem.py). I intend to write more about reinforcement learning in the future.
 
-I hope you enjoyed this, and I intend to write more about reinforcement learning in the future.
+I hope you enjoyed this, and I encourage you to explore the exciting field of reinforcement learning and try out some of the algorithms for yourself. Best of luck!
 
-Warm regards,
 William Fraher
