@@ -23,7 +23,7 @@ To have a machine make decisions in an environment, it needs to weigh decisions 
 
 We want to find a set of parameters $\theta$ that results in $\pi$<sub>$\theta$</sub> choosing the best actions possible, or the actions that will result in the highest expected sum of rewards. We can determine a reasonable $\theta$ with a reinforcement learning algorithm. Before we try it out, however, we should look at an environment first.
 
-#OpenAI Gym and the pole balancing problem#
+###OpenAI Gym and the pole balancing problem###
 
 When we are testing out a new algorithm, it's often good to first try it on a simple environment. This is where OpenAI gym is here to help! OpenAI gym provides an enviroment for reinforcement learning experimentation. It allows us to easily get states, input actions, and get rewards from a large variety of environments. We are going to solve the pole balancing problem. 
 
@@ -36,7 +36,7 @@ In this example, the states we deal with are four floating point numbers. The en
 
 You can install gym with 'pip install gym'. The following program shows how to use gym to create a random agent for the pole balancing problem and graph its progress. If you're curious about the function calls, check out [OpenAI Gym's documentation](https://gym.openai.com/docs/).
 
-'''python
+```python
 import gym
 import matplotlib.pyplot as plt
 import random
@@ -59,10 +59,14 @@ for i in range(episodes):
     
 plt.plot(total_rewards)
 plt.show()
-'''
+```
 
 Running the following program gives a graph like this:
 
 <img src = "/images/randomAgent.png">
 
 giving us the scores of an agent that chooses its actions at random. It is good practice to create such a graph, to measure how a random agent performs. Here we can see that it consistently scores about a 20 in the pole balancing problem, though it can reasonably score a 40, and on a rare occasion, score close to 100. This will help us gauge if our agent is actually learning. If our agent continually gets these scores, we'll know that it might just be acting randomly, and could need work. Some strategies, such as being epsilon-greedy for Q-learning, use randomness, so this may also help to see if intentional randomness is working correctly. We'd like something, however, to work more effectively than a random agent.
+
+###The Cross Entropy Method###
+
+To beat our random agent, one algorithm we could employ is the cross entropy method. 
