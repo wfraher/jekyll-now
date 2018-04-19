@@ -34,4 +34,35 @@ This agent acts randomly. The goal here is to keep the pole from falling over as
 
 In this example, the states we deal with are four floating point numbers. The environment outputs a state that consists of the position of the cart, the velocity of the cart, the angle of the pole, and the rotation rate of the pole. Our actions consist of increasing or decreasing the cart's velocity, which allow us to move the cart left or right.
 
-You can install gym with 'pip install gym'. 
+You can install gym with 'pip install gym'. The following program shows how to use gym to create a random agent for the pole balancing problem and graph its progress.
+
+'''python
+import gym
+import matplotlib.pyplot as plt
+import random
+
+env = gym.make('CartPole-v1')
+max_steps = 500
+total_rewards = []  
+episodes = 1000
+
+for i in range(episodes):
+    s = env.reset()
+    rewards = 0    
+    for t in range(max_steps):
+        a = random.choice(range(2))
+        ns, r, d, _ = env.step(a)
+        rewards += r
+        if d:
+            break
+    total_rewards.append(rewards)
+    
+plt.plot(total_rewards)
+plt.show()
+'''
+
+Running the following program gives a graph like this:
+
+<img src = "/images/randomAgent.png">
+
+giving us the scores of an agent that chooses its actions at random. It is good practice to create such a graph, to measure how a random agent performs. Here we can see that it consistently scores about a 20 in the pole balancing problem, though it can reasonably score a 40, and on a rare occasion, score close to 100. This will help us gauge if our agent is actually learning. If our agent continually gets these scores, we'll know that it might just be acting randomly, and could need work. Some strategies, such as being epsilon-greedy for Q-learning, use randomness, so this may also help to see if intentional randomness is working correctly. We'd like something, however, to work more effectively than a random agent.
