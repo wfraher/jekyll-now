@@ -10,7 +10,6 @@ mathjax: true
 Reinforcement learning is an extremely exciting field! It's hard to watch the incredible results of a machine learning how to conduct [robot locomotion](https://www.youtube.com/watch?v=_LBZpPQYHA4), playing [atari games from screen data](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf), or defeating champtions at [go](https://deepmind.com/research/alphago/) and [DOTA](https://blog.openai.com/dota-2/), without wondering how they work. Without knowledge of the techniques, it seems mind boggling that this kind of technology could learn a complicated environment, [like a game](https://www.youtube.com/watch?v=TmPfTpjtdgg), without any idea of how the game works. In this post, I'll explain what reinforcement learning is and how a simple evolutionary algorithm, the cross entropy method, can find reasonable behaviors.
 
 
-
 So what is reinforcement learning anyway?
 
 
@@ -21,3 +20,18 @@ So what is reinforcement learning anyway?
 In reinforcement learning, we are given an environment. This environment could be a video game or a robotics task, for instance. The environment gives off some kind of state that we observe, like the screen of a game. Using the state, we can infer some kind of action, which could be moving parts of a robot, pressing buttons, or issuing some other kind of command. These actions result in the environment changing its state, which we infer to produce more actions. The environment also gives off rewards. These rewards could occur after each action, continuously, or after an episode terminates, if we are working in an episodic environment. Reinforcement learning is the process of learning how to choose actions, based off of states, in a way that maximizes expected rewards. We say expected rewards because some environments are stochastic, or chance-based, so we might not be able to say what reward we will get for certain.
 
 To have a machine make decisions in an environment, it needs to weigh decisions by valuing different inputs, or parts of the state. This is done with a set of parameters, which we denote $\theta$.Each a<sub>t</sub>, s<sub>t</sub>, and r<sub>t</sub> denotes the action, state, and reward at each time step of the environment. The time step is denoted t. The way that an agent computes an action, given a set of parameters, is called a policy. A policy with parameters $\theta$ is denoted $\pi$<sub>$\theta$</sub>. This policy is actually a function, that maps states to actions. So at any timestep t, a<sub>t</sub> = $\pi$<sub>$\theta$</sub>(s<sub>t</sub>). This just means that a policy with parameters $\theta$ maps a state at timestep t to the action at timestep t.
+
+We want to find a set of parameters $\theta$ that results in $\pi$<sub>$\theta$</sub> choosing the best actions possible, or the actions that will result in the highest expected sum of rewards. We can determine a reasonable $\theta$ with a reinforcement learning algorithm. Before we try it out, however, we should look at an environment first.
+
+#OpenAI Gym and the pole balancing problem#
+
+When we are testing out a new algorithm, it's often good to first try it on a simple environment. This is where OpenAI gym is here to help! OpenAI gym provides an enviroment for reinforcement learning experimentation. It allows us to easily get states, input actions, and get rewards from a large variety of environments. We are going to solve the pole balancing problem. 
+
+<img src = "/images/cartpole.gif">
+(gif from [OpenAI](https://gym.openai.com/envs/CartPole-v1/) )
+
+This agent acts randomly. The goal here is to keep the pole from falling over as long as possible by moving a cart back and forth. We get a positive reward for every timestep in which the pole stays upright. Thus, maximizing the rewards will result in keeping the pole upright for as long as possible. If the pole starts to fall over, the episode terminates.
+
+In this example, the states we deal with are four floating point numbers. The environment outputs a state that consists of the position of the cart, the velocity of the cart, the angle of the pole, and the rotation rate of the pole. Our actions consist of increasing or decreasing the cart's velocity, which allow us to move the cart left or right.
+
+You can install gym with 'pip install gym'. 
