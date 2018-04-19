@@ -34,7 +34,7 @@ This agent acts randomly. The goal here is to keep the pole from falling over as
 
 In this example, the states we deal with are four floating point numbers. The environment outputs a state that consists of the position of the cart, the velocity of the cart, the angle of the pole, and the rotation rate of the pole. Our actions consist of increasing or decreasing the cart's velocity, which allow us to move the cart left or right.
 
-You can install gym with 'pip install gym'. The following program shows how to use gym to create a random agent for the pole balancing problem and graph its progress.
+You can install gym with 'pip install gym'. The following program shows how to use gym to create a random agent for the pole balancing problem and graph its progress. If you're curious about the function calls, check out [OpenAI Gym's documentation](https://gym.openai.com/docs/).
 
 '''python
 import gym
