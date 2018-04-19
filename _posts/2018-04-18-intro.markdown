@@ -145,3 +145,6 @@ If you're interested in reinforcement learning, there are many amazing resources
 If you're interested in my implementation of CEM, [check it out on my github](https://github.com/wfraher/CrossEntropyMethod/blob/master/cem.py).
 
 I hope you enjoyed this, and I intend to write more about reinforcement learning in the future.
+
+Warm regards,
+William Fraher
