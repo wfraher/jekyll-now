@@ -6,3 +6,18 @@ excerpt: "This post introduces the topic of reinforcement learning and explains 
 date:   2018-04-18 11:31:00
 mathjax: true
 ---
+
+Reinforcement learning is an extremely exciting field! It's hard to watch the incredible results of a machine learning how to conduct [robot locomotion](https://www.youtube.com/watch?v=_LBZpPQYHA4), playing [atari games from screen data](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf), or defeating champtions at [go](https://deepmind.com/research/alphago/) and [DOTA](https://blog.openai.com/dota-2/), without wondering how they work. Without knowledge of the techniques, it seems mind boggling that this kind of technology could learn a complicated environment, [like a game](https://www.youtube.com/watch?v=TmPfTpjtdgg), without any idea of how the game works. In this post, I'll explain what reinforcement learning is and how a simple evolutionary algorithm, the cross entropy method, can find reasonable behaviors.
+
+
+
+So what is reinforcement learning anyway?
+
+
+<img src="/images/rl.png">
+(image from Sutton and Barto, Reinforcement Learning: An Introduction, 1998)
+
+
+In reinforcement learning, we are given an environment. This environment could be a video game or a robotics task, for instance. The environment gives off some kind of state that we observe, like the screen of a game. Using the state, we can infer some kind of action, which could be moving parts of a robot, pressing buttons, or issuing some other kind of command. These actions result in the environment changing its state, which we infer to produce more actions. The environment also gives off rewards. These rewards could occur after each action, continuously, or after an episode terminates, if we are working in an episodic environment. Reinforcement learning is the process of learning how to choose actions, based off of states, in a way that maximizes expected rewards. We say expected rewards because some environments are stochastic, or chance-based, so we might not be able to say what reward we will get for certain.
+
+To have a machine make decisions in an environment, it needs to weight decisions by valuing different inputs, or parts of the state. We call this set of weights $\theta$ .
