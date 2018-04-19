@@ -1,5 +1,5 @@
 # Site settings
-title: William Fraher's Github Blog
+name: William Fraher's Github Blog
 email: 
 description: "I enjoy deep reinforcement learning, among other things."
 baseurl: ""
