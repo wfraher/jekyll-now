@@ -23,7 +23,7 @@ To have a machine make decisions in an environment, it needs to weigh decisions 
 
 We want to find a set of parameters $\theta$ that results in $\pi$<sub>$\theta$</sub> choosing the best actions possible, or the actions that will result in the highest expected sum of rewards. We can determine a reasonable $\theta$ with a reinforcement learning algorithm. Before we try it out, however, we should look at an environment first.
 
-###OpenAI Gym and the pole balancing problem###
+### OpenAI Gym and the pole balancing problem
 
 When we are testing out a new algorithm, it's often good to first try it on a simple environment. This is where OpenAI gym is here to help! OpenAI gym provides an enviroment for reinforcement learning experimentation. It allows us to easily get states, input actions, and get rewards from a large variety of environments. We are going to solve the pole balancing problem. 
 
@@ -32,7 +32,7 @@ When we are testing out a new algorithm, it's often good to first try it on a si
 
 This agent acts randomly. The goal here is to keep the pole from falling over as long as possible by moving a cart back and forth. We get a positive reward for every timestep in which the pole stays upright. Thus, maximizing the rewards will result in keeping the pole upright for as long as possible. If the pole starts to fall over, the episode terminates.
 
-In this example, the states we deal with are four floating point numbers. The environment outputs a state that consists of the position of the cart, the velocity of the cart, the angle of the pole, and the rotation rate of the pole. Our actions consist of increasing or decreasing the cart's velocity, which allow us to move the cart left or right.
+In this example, the states we deal with are four floating point numbers. The environment outputs a state that consists of the position of the cart, the velocity of the cart, the angle of the pole, and the rotation rate of the pole. Our actions consist of increasing or decreasing the cart's velocity, which allow us to move the cart left or right. We can hold the pole in the air for a maximum of 500 timesteps. If our implementation can keep it in the air for 500 timesteps reliably, our program has solved the environment.
 
 You can install gym with 'pip install gym'. The following program shows how to use gym to create a random agent for the pole balancing problem and graph its progress. If you're curious about the function calls, check out [OpenAI Gym's documentation](https://gym.openai.com/docs/).
 
@@ -67,6 +67,81 @@ Running the following program gives a graph like this:
 
 giving us the scores of an agent that chooses its actions at random. It is good practice to create such a graph, to measure how a random agent performs. Here we can see that it consistently scores about a 20 in the pole balancing problem, though it can reasonably score a 40, and on a rare occasion, score close to 100. This will help us gauge if our agent is actually learning. If our agent continually gets these scores, we'll know that it might just be acting randomly, and could need work. Some strategies, such as being epsilon-greedy for Q-learning, use randomness, so this may also help to see if intentional randomness is working correctly. We'd like something, however, to work more effectively than a random agent.
 
-###The Cross Entropy Method###
+### The Cross Entropy Method
 
-To beat our random agent, one algorithm we could employ is the cross entropy method. 
+To beat our random agent, one algorithm we could employ is called the cross entropy method. The cross entropy method is a simple evolutionary algorithm inspired by hill climbing search. It samples parameter sets from a multivariate gaussian distribution. Each sample has its corresponding policy, $\pi$<sub>$\theta$</sub> act in the environment throughout a rollout, or episode. The samples which earn the highest rewards are kept. It then takes these best samples and uses them to calculate a new mean and standard deviation, to be used by our gaussian distribution in the future. By doing this, our best parameter sets push the direction in which new ones are sampled in the future. 
+
+<img src = '/images/cem.png'>
+(image from [Xi (Peter) Chen, John Schulman, and Peter Abbeel](https://drive.google.com/file/d/0BxXI_RttTZAhSDN0RWlpTnZKblU/view))
+
+First we initialize the mean and sigma to random vectors with entries greater than 0. We want these to have the same dimension as our parameter vector. In the CartPole example, we have 4 inputs and 2 outputs, so let's have our parameter vector be of length 8. This means our mean and standard deviation, denoted in the pseudocode by $\mu$ and $\sigma$, should also have length 8.
+
+We can accomplish this in our code with
+```python
+theta = np.array([hidden_size]) #4 inputs, two outputs (observation and action)
+mean = np.random.randn(hidden_size) #the mean for the gaussian distribution
+stdev = np.random.randn(hidden_size) #standard deviation for gaussian distribution
+```
+where hidden_size is 8. In my code, I obtained hidden_size by multiplying env.observation_space.shape[0] by env.action_space.n. This gives us the state size (the observation space is a vector with shape (4,), so calling shape[0] will return 4) multiplied by the size of the action space (there are two actions, so this will evaluate to 2). This is good practice as it allows our program to be more easily modified for other environments. 
+
+We can then iterate over a for loop to conduct our training as much as we want.
+
+We need to sample our parameter sets from a multivariate gaussian distribution to test them out. This might sound scary, but our old friend numpy is here to help. Numpy has a [built in function for calculating these distributions](https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.random.multivariate_normal.html). 
+
+The covariance matrix of this multivariate distribution might sound scary, but it's actually just the diagonal matrix of our standard deviation. We've already initialized the standard deviation, so we can calculate this with `np.diag(stdev)`. This will create an NxN matrix, where N is the hidden_size we declared earlier. We've also already initialized the mean as an N dimensional vector, so we can sample our parameter sets with `theta = np.random.multivariate_normal(mean,diag,population)`. The third argument here, population, is a hyperparameter we choose. This just tells the distribution how many parameter sets we sample.
+
+After that, we iterate over the population with the following loop. I calculate actions using a feedforward neural network, though they could also be obtained using other methods. It should be noted here that the feedforward neural network is just matrix multiplication of the inputs with the parameter vector. We just reshape the parameter vector to 4x2, or observation_size x action_size, and multiply the state with this parameter matrix.
+
+```python
+    for e in theta:
+        s = preprocess(env.reset()) #lets our feedforward network manipulate the state
+        d = False
+        rewards = 0
+        W = np.reshape(e,[observation_size,action_size]) #reshapes the parameter vector to compute actions
+        for t in range(max_timesteps):
+	    #env.render()
+            a = np.argmax(np.matmul(s,W))
+            ns, r, d, _ = env.step(a)
+            s = preprocess(ns)
+            rewards += r
+            if d:
+                results.append([e,rewards])
+                break
+        if t == max_timesteps and not d:
+            results.append([e,rewards])
+```
+
+If you want to see how each sample of the population performs, uncomment env.render().
+
+In this example, results is a list that keeps track of each sample, as well as its score. I like to have the program print to the console how well it does at each step. This can be accomplished with
+`    print 'Episode ' + str(i) +' finished with reward ' + str(results[np.argmax(np.asarray(results)[:,1])][1])`.
+
+I also keep a running list of the rewards the best sample accumulates at each iteration. This is accomplished with
+`total_rewards.append(results[np.argmax(np.asarray(results)[:,1])][1]) #saves the reward to graph later` and lets us build a score graph later on.
+
+Next, we want to take the best samples and calculate the new mean and standard deviation out of them. Here, keep_count is another hyperparameter that determines how many of the best samples are kept at each iteration.
+
+```python
+    for b in range(keep_count): #takes the best keep_count thetas
+        best.append(results[np.argmax(np.asarray(results)[:,1])][0]) #add the best one to a new list
+        results.pop(np.argmax(np.asarray(results)[:,1])) #take out the best one from the old list
+    #Creates the new mean and standard deviation based off of our best samples
+    mean = np.mean(best,axis=0)
+    stdev = np.std(best,axis=0)
+```
+
+We can calculate the mean and standard deviation of our samples automatically using numpy. We also need to execute these calls over the 0th axis, to make sure that each individual value in the samples is being combined for our new variables.
+
+This is our entire training loop. When we are done, we can plot the results with the following matplotlib calls:
+plt.plot(total_rewards)
+plt.show().
+
+This lets us see how our program performs over time. My program yields the following graph:
+<img src ="/images/cem_result_cartpole.png">
+which solved the environment after 15 iterations. CEM, while being simple, can be extremely effective. It has been shown to outperform other RL methods in [tetris](https://pdfs.semanticscholar.org/b199/22afc8678a228c780715d50f5a427dc51680.pdf), even more complicated ones such as the [natural policy gradient](https://papers.nips.cc/paper/2073-a-natural-policy-gradient.pdf) in that domain. According to [Andrej Karpathy](http://karpathy.github.io/2016/05/31/rl/), CEM should always be tried before a more complex algorithm.
+
+If you're interested in reinforcement learning, there are many amazing resources to learn from online. [Berkeley's deep RL bootcamp](https://sites.google.com/view/deep-rl-bootcamp/lectures), [David Silver's course](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html), and [Arthur Juliani's series](https://medium.com/emergent-future/simple-reinforcement-learning-with-tensorflow-part-0-q-learning-with-tables-and-neural-networks-d195264329d0) are all wonderful, to name a few.
+
+If you're interested in my implementation of CEM, [check it out on my github](https://github.com/wfraher/CrossEntropyMethod/blob/master/cem.py).
+
+I hope you enjoyed this, and I intend to write more about reinforcement learning in the future.
