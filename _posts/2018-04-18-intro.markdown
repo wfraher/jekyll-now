@@ -114,7 +114,7 @@ After that, we iterate over the population with the following loop. I calculate 
 If you want to see how each sample of the population performs, uncomment env.render().
 
 In this example, results is a list that keeps track of each sample, as well as its score. I like to have the program print to the console how well it does at each step. This can be accomplished with
-`    print 'Episode ' + str(i) +' finished with reward ' + str(results[np.argmax(np.asarray(results)[:,1])][1])`.
+`print 'Episode ' + str(i) +' finished with reward ' + str(results[np.argmax(np.asarray(results)[:,1])][1])`.
 
 I also keep a running list of the rewards the best sample accumulates at each iteration. This is accomplished with
 `total_rewards.append(results[np.argmax(np.asarray(results)[:,1])][1]) #saves the reward to graph later` 
