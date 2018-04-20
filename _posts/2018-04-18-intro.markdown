@@ -13,13 +13,13 @@ Reinforcement learning is an extremely exciting field! It's hard to watch the in
 So what is reinforcement learning anyway?
 
 
-<img src="/images/rl.png">
+<img src="/images/rl.png">  
 (image from Sutton and Barto, Reinforcement Learning: An Introduction, 1998)
 
 
 In reinforcement learning, we are given an environment. This environment could be a video game or a robotics task, for instance. The environment gives off some kind of state that we observe, like the screen of a game. Using the state, we can infer some kind of action, which could be moving parts of a robot, pressing buttons, or issuing some other kind of command. These actions result in the environment changing its state, which we infer to produce more actions. The environment also gives off rewards. These rewards could occur after each action, continuously, or after an episode terminates, if we are working in an episodic environment. Reinforcement learning is the process of learning how to choose actions, based off of states, in a way that maximizes expected rewards. We say expected rewards because some environments are stochastic, or chance-based, so we might not be able to say what reward we will get for certain.
 
-To have a machine make decisions in an environment, it needs to weigh decisions by valuing different inputs, or parts of the state. This is done with a set of parameters, which we denote $\theta$.Each $a_t, s_t$, and $r_t$ denotes the action, state, and reward at each time step of the environment. The time step is denoted t. The way that an agent computes an action, given a set of parameters, is called a policy. A policy with parameters $\theta$ is denoted $\pi_\theta$. This policy is actually a function, that maps states to actions. So at any timestep t, $a_t$ = $\pi_\theta(s_t)$. This just means that a policy with parameters $\theta$ maps a state at timestep t to the action at timestep t.
+To have a machine make decisions in an environment, it needs to weigh decisions by valuing different inputs, or parts of the state. This is done with a set of parameters, which we denote $\theta$.Each $a_t, s_t$, and $r_t$ denotes the action, state, and reward at each time step of the environment. The time step is denoted $t$. The way that an agent computes an action, given a set of parameters, is called a policy. A policy with parameters $\theta$ is denoted $\pi_\theta$. This policy is actually a function, that maps states to actions. So at any timestep $t$, $a_t$ = $\pi_\theta(s_t)$. This just means that a policy with parameters $\theta$ maps a state at timestep $t$ to the action at timestep $t$.
 
 We want to find a set of parameters $\theta$ that results in $\pi_\theta$ choosing the best actions possible, or the actions that will result in the highest expected sum of rewards. We can determine a reasonable $\theta$ with a reinforcement learning algorithm. Before we try it out, however, we should look at an environment first.
 
@@ -27,7 +27,7 @@ We want to find a set of parameters $\theta$ that results in $\pi_\theta$ choosi
 
 When we are testing out a new algorithm, it's often good to first try it on a simple environment. This is where OpenAI gym is here to help! OpenAI gym provides an enviroment for reinforcement learning experimentation. It allows us to easily get states, input actions, and get rewards from a large variety of environments. We are going to solve the pole balancing problem. 
 
-<img src = "/images/cartpole.gif">
+<img src = "/images/cartpole.gif">  
 (gif from [OpenAI](https://gym.openai.com/envs/CartPole-v1/) )
 
 This agent acts randomly. The goal here is to keep the pole from falling over as long as possible by moving a cart back and forth. We get a positive reward for every timestep in which the pole stays upright. Thus, maximizing the rewards will result in keeping the pole upright for as long as possible. If the pole starts to fall over, the episode terminates.
@@ -63,7 +63,7 @@ plt.show()
 
 Running the following program gives a graph like this:
 
-<img src = "/images/randomAgent.png">
+<img src = "/images/randomAgent.png">  
 
 giving us the scores of an agent that chooses its actions at random. It is good practice to create such a graph, to measure how a random agent performs. Here we can see that it consistently scores about a 20 in the pole balancing problem, though it can reasonably score a 40, and on a rare occasion, score close to 100. This will help us gauge if our agent is actually learning. If our agent continually gets these scores, we'll know that it might just be acting randomly, and could need work. Some strategies, such as being epsilon-greedy for Q-learning, use randomness, so this may also help to see if intentional randomness is working correctly. We'd like something, however, to work more effectively than a random agent.
 
@@ -71,7 +71,7 @@ giving us the scores of an agent that chooses its actions at random. It is good 
 
 To beat our random agent, one algorithm we could employ is called the cross entropy method. The cross entropy method is a simple evolutionary algorithm inspired by hill climbing search. It samples parameter sets from a multivariate gaussian distribution. Each sample has its corresponding policy, $\pi_\theta$ act in the environment throughout a rollout, or episode. The samples which earn the highest rewards are kept. It then takes these best samples and uses them to calculate a new mean and standard deviation, to be used by our gaussian distribution in the future. By doing this, our best parameter sets push the direction in which new ones are sampled in the future. 
 
-<img src = '/images/cem.png'>
+<img src = '/images/cem.png'>  
 (image from [Xi (Peter) Chen, John Schulman, and Peter Abbeel](https://drive.google.com/file/d/0BxXI_RttTZAhSDN0RWlpTnZKblU/view))\
 
 First we initialize the mean and sigma to random vectors with entries greater than 0. We want these to have the same dimension as our parameter vector. In the CartPole example, we have 4 inputs and 2 outputs, so let's have our parameter vector be of length 8. This means our mean and standard deviation, denoted in the pseudocode by $\mu$ and $\sigma$, should also have length 8.
@@ -137,7 +137,7 @@ plt.plot(total_rewards)
 plt.show().
 
 This lets us see how our program performs over time. My program yields the following graph:
-<img src ="/images/cem_result_cartpole.png">
+<img src ="/images/cem_result_cartpole.png">  
 which solved the environment after 15 iterations. CEM, while being simple, can be extremely effective. It has been shown to outperform other RL methods in [tetris](https://pdfs.semanticscholar.org/b199/22afc8678a228c780715d50f5a427dc51680.pdf), even more complicated ones such as the [natural policy gradient](https://papers.nips.cc/paper/2073-a-natural-policy-gradient.pdf) in that domain. According to [Andrej Karpathy](http://karpathy.github.io/2016/05/31/rl/), CEM should always be tried before a more complex algorithm.
 
 If you're interested in reinforcement learning, there are many amazing resources to learn from online. [Berkeley's deep RL bootcamp](https://sites.google.com/view/deep-rl-bootcamp/lectures), [David Silver's course](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching.html), and [Arthur Juliani's series](https://medium.com/emergent-future/simple-reinforcement-learning-with-tensorflow-part-0-q-learning-with-tables-and-neural-networks-d195264329d0) are all wonderful, to name a few.
