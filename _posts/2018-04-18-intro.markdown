@@ -82,7 +82,7 @@ theta = np.array([hidden_size]) #4 inputs, two outputs (observation and action)
 mean = np.random.randn(hidden_size) #the mean for the gaussian distribution
 stdev = np.random.randn(hidden_size) #standard deviation for gaussian distribution
 ```
-where hidden_size is 8. In my code, I obtained hidden_size by multiplying env.observation_space.shape[0] by env.action_space.n. This gives us the state size (the observation space is a vector with shape (4,), so calling shape[0] will return 4) multiplied by the size of the action space (there are two actions, so this will evaluate to 2). This is good practice as it allows our program to be more easily modified for other environments. 
+where hidden_size is 8. In my code, I obtained hidden_size by multiplying `env.observation_space.shape[0]` by `env.action_space.n`. This gives us the state size (the observation space is a vector with shape (4,), so calling `shape[0]` will return 4) multiplied by the size of the action space (there are two actions, so this will evaluate to 2). This is good practice as it allows our program to be more easily modified for other environments. 
 
 We can then iterate over a for loop to conduct our training as much as we want.
 
@@ -117,7 +117,8 @@ In this example, results is a list that keeps track of each sample, as well as i
 `    print 'Episode ' + str(i) +' finished with reward ' + str(results[np.argmax(np.asarray(results)[:,1])][1])`.
 
 I also keep a running list of the rewards the best sample accumulates at each iteration. This is accomplished with
-`total_rewards.append(results[np.argmax(np.asarray(results)[:,1])][1]) #saves the reward to graph later` and lets us build a score graph later on.
+`total_rewards.append(results[np.argmax(np.asarray(results)[:,1])][1]) #saves the reward to graph later` 
+and lets us build a score graph later on.
 
 Next, we want to take the best samples and calculate the new mean and standard deviation out of them. Here, keep_count is another hyperparameter that determines how many of the best samples are kept at each iteration.
 
