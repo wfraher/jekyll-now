@@ -11,6 +11,9 @@ github_username:  wfraher
 markdown: kramdown
 permalink: pretty
 
+#For disqus commenting
+disqus: wfraher-github-io
+
 highlighter: rouge
 kramdown:
   input: GFM
