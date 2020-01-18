@@ -8,31 +8,37 @@ mathjax: true
 comments: true
 ---
 
-Reinforcement learning is an extremely exciting field! It's hard to watch the incredible results of machine learning systems, from how to conduct [robot locomotion](https://www.youtube.com/watch?v=_LBZpPQYHA4), playing [atari games from screen data](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf), or defeating champtions at [go](https://deepmind.com/research/alphago/) and [DOTA](https://blog.openai.com/dota-2/), without wondering how they work. Without knowledge of the techniques, it seems mind boggling that this kind of technology could learn a complicated environment, [like a game](https://www.youtube.com/watch?v=TmPfTpjtdgg), without any idea of how the game works. In this post, I'll explain what reinforcement learning is and how a simple evolutionary algorithm, the cross entropy method, can solve control problems.
+Reinforcement learning is an extremely exciting field! It's hard to watch the incredible results of reinforcement learning systems, from learning how to conduct [robot locomotion](https://www.youtube.com/watch?v=_LBZpPQYHA4), learning various [atari games from screen data](https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf), or defeating high-ranking human players at [go](https://deepmind.com/research/alphago/) and [DOTA](https://blog.openai.com/dota-2/), without wondering how these systems work. Without knowledge of the techniques employed, it seems unbelievable that this kind of technology could navigate a complicated environment, [like a video game](https://www.youtube.com/watch?v=TmPfTpjtdgg), without any idea of how that environment works. In this post, I'll explain what reinforcement learning is and how a simple evolutionary algorithm, the cross entropy method, can solve simple environments.
 
-So what is reinforcement learning anyway?
+So what is reinforcement learning?
 
 
 <img src="/images/rl.png">  
 (image from Sutton and Barto, Reinforcement Learning: An Introduction, 1998)
 
 
-In reinforcement learning, we are given an environment. This environment could be a video game or a robotics task, for instance. The environment gives off some kind of state that we observe, like the screen of a game. Using the state, we can infer some kind of action, which could be moving parts of a robot, pressing buttons, or issuing some other kind of command. These actions result in the environment changing its state, which we infer to produce more actions. The environment also gives off rewards. These rewards could occur after each action, continuously, or after an episode terminates, if we are working in an episodic environment. Reinforcement learning is the process of learning how to choose actions, based off of states, in a way that maximizes expected rewards. We say expected rewards because some environments are stochastic, or chance-based, so we might not be able to say what reward we will get for certain.
+In reinforcement learning, our goal is to create an agent that can figure out how to navigate an environment. This environment could be a video game or a robotics task, for instance. The environment contains some kind of state that we presently observe, like the screen of a game. Using the state, as humans we infer what's going on in the environment. Characters on a screen give us information of the present state of a game, for example. Similarly, cameras and sensors can determine the state of a self-driving car environment.
 
-To have a machine make decisions in an environment, it needs to weigh decisions by valuing different inputs, or parts of the state. This is done with a set of parameters, which we denote $\theta$.Each $a_t, s_t$, and $r_t$ denotes the action, state, and reward at each time step of the environment. The time step is denoted $t$. The way that an agent computes an action, given a set of parameters, is called a policy. A policy with parameters $\theta$ is denoted $\pi_\theta$. This policy is actually a function, that maps states to actions. So at any timestep $t$, $a_t$ = $\pi_\theta(s_t)$. This just means that a policy with parameters $\theta$ maps a state at timestep $t$ to the action at timestep $t$.
+From this state, we can infer some kind of action, which could be moving parts of a robot, pressing buttons, or issuing some other kind of command. These actions result in the environment changing its state and generating a new state. We then infer this new state to produce more actions. 
+
+What is the actual point of these actions? As humans, we have a goal in mind when acting in an envrionment. When driving a car, we want to get to our destination safely. When performing a locomotive task, such as drinking coffee, we want to do it concisely, quickly, and without injury. When playing a sport, our goal is to have a better score than our opponent. In order for us to create agents which can automate these tasks, we need to express our goals numerically. We do this by giving the agent a positive reward for correct actions, or a negative reward for incorrect actions. This reward is just a number representing how well the agent is performing its task. An environment used to train a reinforcement learning agent must give off some kind of reward when new states are reached. These rewards could occur after each action, continuously, or after a training episode ends. 
+
+Reinforcement learning is the process of learning how to choose actions, based off of states, in a way that maximizes expected rewards. We say expected rewards because many environments are stochastic, or chance-based, so we might not be able to say what reward we will get for certain. So we want our agents to perform well in the average case, regardless of its luck.
+
+To have a machine make decisions in an environment, it needs to weigh decisions by numerically valuing the state against numbers it stores internally. This is done with a set of decision-making parameters, which we denote $\theta$. Each $a_t, s_t$, and $r_t$ denotes the action, state, and reward at each time we sample the environment. The current sample, with respect to time, is called  the time step and is denoted $t$. The way that an agent computes an action, given a set of parameters, is called a policy. A policy with parameters $\theta$ is denoted $\pi_\theta$. This policy is actually a function which maps states to actions. So at any timestep $t$, $a_t$ = $\pi_\theta(s_t)$. This just means that a policy with parameters $\theta$ maps a state at timestep $t$ to the action chosen at timestep $t$.
 
 We want to find a set of parameters $\theta$ that results in $\pi_\theta$ choosing the best actions possible, or the actions that will result in the highest expected sum of rewards. We can determine a reasonable $\theta$ with a reinforcement learning algorithm. Before we try it out, however, we should look at an environment first.
 
 ### OpenAI Gym and the pole balancing problem
 
-When we are testing out a new algorithm, it's often good to first try it on a simple environment. This is where OpenAI gym is here to help! OpenAI gym provides an enviroment for reinforcement learning experimentation. It allows us to easily get states, input actions, and get rewards from a large variety of environments. We are going to solve the pole balancing problem. 
+When we are testing out a new algorithm, it's often good to first try it on a simple problem. This is where OpenAI gym proves very useful. OpenAI gym provides many environments for reinforcement learning experimentation. It allows us to easily get states, input actions, and retrieve rewards from a large variety of environments. We are going to solve the pole balancing problem. 
 
 <img src = "/images/cartpole.gif">  
 (gif from [OpenAI](https://gym.openai.com/envs/CartPole-v1/) )
 
 This agent acts randomly. The goal here is to keep the pole from falling over as long as possible by moving a cart back and forth. We get a positive reward for every timestep in which the pole stays upright. Thus, maximizing the rewards will result in keeping the pole upright for as long as possible. If the pole starts to fall over, the episode terminates.
 
-In this example, the states we deal with are four floating point numbers. The environment outputs a state that consists of the position of the cart, the velocity of the cart, the angle of the pole, and the rotation rate of the pole. Our actions consist of increasing or decreasing the cart's velocity, which allow us to move the cart left or right. We can hold the pole in the air for a maximum of 500 timesteps. If our implementation can keep it in the air for 500 timesteps reliably, our program has solved the environment.
+In this example, the states we deal with are four floating point numbers. The environment outputs a state that consists of the position of the cart, the velocity of the cart, the angle of the pole, and the rotation rate of the pole. Our actions consist of increasing or decreasing the cart's velocity, which allow us to move the cart left or right. We can hold the pole in the air for a maximum of 500 time steps. If our implementation can keep it in the air for 500 time steps reliably, we consider the environment to be solved.
 
 You can install gym with 'pip install gym'. The following program shows how to use gym to create a random agent for the pole balancing problem and graph its progress. If you're curious about the function calls, check out [OpenAI Gym's documentation](https://gym.openai.com/docs/).
 
@@ -65,32 +71,32 @@ Running the following program gives a graph like this:
 
 <img src = "/images/randomAgent.png">  
 
-giving us the scores of an agent that chooses its actions at random. It is good practice to create such a graph, to measure how a random agent performs. Here we can see that it consistently scores about a 20 in the pole balancing problem, though it can reasonably score a 40, and on a rare occasion, score close to 100. This will help us gauge if our agent is actually learning. If our agent continually gets these scores, we'll know that it might just be acting randomly, and could need work. Some strategies, such as being epsilon-greedy for Q-learning, use randomness, so this may also help to see if intentional randomness is working correctly. We'd like something, however, to work more effectively than a random agent.
+giving us the scores of an agent that chooses its actions at random. It is good practice to test an agent we're interested in against a random agent and other benchmarks. Here we can see that it consistently scores about a 20 in the pole balancing problem, though it can reasonably score a 40, and on a rare occasion, score close to 100. This will help us gauge if our reinforcement agent is actually learning by comparing it to the random agent. If our agent continually gets these scores, we'll know that it is just acting randomly or has sub-random performance and needs work. Some strategies, such as being epsilon-greedy for Q-learning, use randomness, so this may also help to see if intentional randomness is working correctly. We'd like something, of course, to work more effectively than a random agent.
 
 ### The Cross Entropy Method
 
-To beat our random agent, one algorithm we could employ is called the cross entropy method. The cross entropy method is a simple evolutionary algorithm inspired by hill climbing search. It samples parameter sets from a multivariate gaussian distribution. Each sample has its corresponding policy, $\pi_\theta$ act in the environment throughout a rollout, or episode. The samples which earn the highest rewards are kept. It then takes these best samples and uses them to calculate a new mean and standard deviation, to be used by our gaussian distribution in the future. By doing this, our best parameter sets push the direction in which new ones are sampled in the future. 
+To beat our random agent, one algorithm we could employ is called the cross entropy method. The cross entropy method is a simple evolutionary algorithm. It samples parameter sets from a multivariate gaussian distribution. Each sample has its corresponding policy, $\pi_\theta$ act in the environment throughout a rollout, or training episode. The samples which earn the highest rewards are kept. It then takes these best samples and uses them to calculate a new mean and standard deviation, to be used by our gaussian distribution in the future. By doing this, our best parameter sets push the direction in which new ones are sampled in the future. 
 
 <img src = '/images/cem.png'>  
 (image from [Xi (Peter) Chen, John Schulman, and Peter Abbeel](https://drive.google.com/file/d/0BxXI_RttTZAhSDN0RWlpTnZKblU/view))\
 
-First we initialize the mean and sigma to random vectors with entries greater than 0. We want these to have the same dimension as our parameter vector. In the CartPole example, we have 4 inputs and 2 outputs, so let's have our parameter vector be of length 8. This means our mean and standard deviation, denoted in the pseudocode by $\mu$ and $\sigma$, should also have length 8.
+First we initialize the mean and standard deviation (mu and sigma) to random vectors with entries greater than 0. We want these to have the same dimension as our parameter vector. In the CartPole example, we have 4 inputs and 2 outputs, so let's have our parameter vector be of length 8, the same size as a flattened 4 by 2 matrix. This means our mean and standard deviation, denoted in the pseudocode by $\mu$ and $\sigma$, should also have length 8.
 
-We can accomplish this in our code with
+We can accomplish this in python code with
 ```python
 theta = np.array([hidden_size]) #4 inputs, two outputs (observation and action)
 mean = np.random.randn(hidden_size) #the mean for the gaussian distribution
 stdev = np.random.randn(hidden_size) #standard deviation for gaussian distribution
 ```
-where hidden_size is 8. In my code, I obtained hidden_size by multiplying `env.observation_space.shape[0]` by `env.action_space.n`. This gives us the state size (the observation space is a vector with shape (4,), so calling `shape[0]` will return 4) multiplied by the size of the action space (there are two actions, so this will evaluate to 2). This is good practice as it allows our program to be more easily modified for other environments. 
+where hidden_size is 8. In my code, I obtained hidden_size by multiplying `env.observation_space.shape[0]` by `env.action_space.n`. This gives us the state size (the observation space is a vector with shape (4,), so calling `shape[0]` will return 4) multiplied by the size of the action space (there are two actions, so this will evaluate to 2). This allows our program to be more easily modified for other environments. 
 
 We can then iterate over a for loop to conduct our training as much as we want.
 
-We need to sample our parameter sets from a multivariate gaussian distribution to test them out. This might sound scary, but our old friend numpy is here to help. Numpy has a [built in function for calculating these distributions](https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.random.multivariate_normal.html). 
+We need to sample our parameter sets from a multivariate gaussian distribution to test them out, for which we will use Numpy. Numpy has a [built in function for calculating these distributions](https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.random.multivariate_normal.html). 
 
-The covariance matrix of this multivariate distribution might sound scary, but it's actually just the diagonal matrix of our standard deviation. We've already initialized the standard deviation, so we can calculate this with `np.diag(stdev)`. This will create an NxN matrix, where N is the hidden_size we declared earlier. We've also already initialized the mean as an N dimensional vector, so we can sample our parameter sets with `theta = np.random.multivariate_normal(mean,diag,population)`. The third argument here, population, is a hyperparameter we choose. This just tells the distribution how many parameter sets we sample.
+The covariance matrix of this multivariate distribution is just the diagonal matrix of our standard deviation. We've already initialized the standard deviation, so we can calculate this covariance matrix with `np.diag(stdev)`. This will create an NxN matrix, where N is the hidden_size we declared earlier. We've also already initialized the mean as an N dimensional vector, so we can sample our parameter sets with `theta = np.random.multivariate_normal(mean,diag,population)`. The third argument here, population, is a hyperparameter we choose. This just tells the distribution how many parameter sets we sample.
 
-After that, we iterate over the population with the following loop. I calculate actions using a feedforward neural network, though they could also be obtained using other methods. It should be noted here that the feedforward neural network is just matrix multiplication of the inputs with the parameter vector. We just reshape the parameter vector to 4x2, or observation_size x action_size, and multiply the state with this parameter matrix.
+After that, we iterate over the population with the following loop. I calculate actions using a simple linear model, though they could also be obtained using other methods, such as neural networks. It should be noted here that the model is just matrix multiplication of the input state with the parameters. We just reshape the parameter vector to 4 by 2, or observation_size by action_size, and multiply the state with this parameter matrix.
 
 ```python
     for e in theta:
@@ -133,7 +139,7 @@ Next, we want to take the best samples and calculate the new mean and standard d
 
 We can calculate the mean and standard deviation of our samples automatically using numpy. We also need to execute these calls over the 0th axis, to make sure that each individual value in the samples is being combined for our new variables.
 
-This is our entire training loop. When we are done, we can plot the results with the following matplotlib calls:
+This is our entire training loop. When we are done, we can plot the results with the following pyplot calls:
 plt.plot(total_rewards)
 plt.show().
 
