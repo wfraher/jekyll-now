@@ -70,7 +70,7 @@ def preprocess(states):
   return torch.FloatTensor(states)
 ```
 
-I chose to leave this as a function for the purposes of routine; for more complicated environments we may need more preprocessing. State size and action size are defined with env.observation_space.shape[0] and env.action_space.n like last time.
+I chose to leave this as a function for the purposes of routine; for more complicated environments we may need more preprocessing. State size and action size are defined with `env.observation_space.shape[0]` and `env.action_space.n` like last time.
 
 I chose the following hyperparameters as well:
 
