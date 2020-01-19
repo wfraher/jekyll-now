@@ -14,7 +14,7 @@ In my last post, we investigated what reinforcement learning is and how CEM-ES, 
 
 Q-learning is a reinforcement learning algorithm popularized by Mnih et al. in 2015, with their article *Human-level control through deep reinforcement learning*. These researchers were able to use a neural network to achieve superhuman performance on many Atari 2600 games, based off of only the screen data and scores of these games, without any change to the network's architecture. It achieved a superior performance to the best linear methods on most games.
 
-<img src = "/images/dqn_article/performance.png">
+<img src = "/images/dqn_performance.png">
 (image from Human-level control through deep reinforcement learning, Mnih et al. 2015)
 
 While having been invented by other people, Mnih et al. were the first people to popularize Q-learning with a deep neural network. The goal of Q-learning is to use a neural network to predict the expected rewards from a given state-action pair. Essentially, we want to map from a given state to whichever action will yield the highest expected sum of rewards, using a neural network. 
