@@ -222,7 +222,7 @@ plt.show()
 
 This warranted the following results when I ran it:
 
-<img src = "images/dqn_article/cartpole_performance.png">
+<img src = "/images/dqn_article/cartpole_performance.png">
 
 which solves the environment, though it is unstable. I tested out mean squared error loss against huber loss, and noted that while [mean squared error loss has a higher average score for this environment, huber loss is more stable.](https://github.com/wfraher/PyTorch-Vanilla-DQN-Experiment) If you'd like to try huber loss for this agent, change
 
