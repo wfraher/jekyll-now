@@ -19,13 +19,18 @@ Q-learning is a reinforcement learning algorithm popularized by Mnih et al. in 2
 
 While having been invented by other people, Mnih et al. were the first people to popularize Q-learning with a deep neural network. The goal of Q-learning is to use a neural network to predict the expected rewards from a given state-action pair. Essentially, we want to map from a given state to whichever action will yield the highest expected sum of rewards, using a neural network. 
 
-$\pi_\theta(s) = max_a(Q(s,a))$
+$\pi_\theta(s_t) = max_a(Q(s_t,a_t))$
 
-Where $Q(s,a)$ is the value of an action $a$ at a state $s$, so $Q(s,a)$ is the value of the state-action pair. The values of state-action pairs are called q-values. We want to build a neural network that maps from states to expected values for each action, so our neural network will approximate $Q(s,a)$. We will test out how q-learning performs on the pole balancing problem before moving to something more complicated.
+Where $Q(s_t,a_t)$ is the value of an action $a_t$ at a state $s_t$ given we're at time step t, so $Q(s_t,a_t)$ is the value of the state-action pair. The values of state-action pairs are called q-values. We want to build a neural network that maps from states to expected values for each action, so our neural network will approximate $Q(s_t,a_t)$. We will test out how q-learning performs on the pole balancing problem before moving to something more complicated.
 
-It might seem that we would want our neural network to predict the sum of rewards like so:
+It might seem that we would want our neural network to predict the following target:
 
-$Q(s,a) = \mathbb{E}[r_t + r_{t+1} + r_{t+2} ...]$
+$Q(s_t,a_t) = \mathbb{E}[r_t + r_{t+1} + r_{t+2} ...]$
 
-essentially predicting the sum of all rewards throughout the whole training episode.
+essentially predicting the sum of all rewards throughout the whole training episode. However, the action the agent currently takes might not be what really warrants a larger reward later on in the episode. As a result, we can introduce another parameter, $\gamma$, to give preference to more recent rewards in comparison to rewards later on. This makes the target modified as such:
 
+$Q(s,a) = \mathbb{E}[r_t + \gamma * r_{t+1} + \gamma^2 * r_{t+2} ...]$
+
+We want $\gamma$ to be less than 1. In reality, q-learning with a neural network can be pretty unstable, so we prefer a reward that makes use of our own q-value approximator:
+
+$Q(s_t,a_t) = r_t + \gamma * max_{a_{t+1}}(Q_{t+1},a_{t+1})
