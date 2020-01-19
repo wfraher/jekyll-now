@@ -8,4 +8,6 @@ mathjax: true
 comments: true
 ---
 
-In my last post, we investigated what reinforcement learning is and how CEM-ES, a simple evolutionary algorithm, can be used to solve certain environments.
+In my last post, we investigated what reinforcement learning is and how CEM-ES, a simple evolutionary algorithm, can be used to solve certain environments. In this post, we will investigate a technique called Q-learning and its successes.
+
+
