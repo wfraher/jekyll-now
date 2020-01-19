@@ -3,7 +3,7 @@ layout: post
 comments: true
 title:  "Let's learn reinforcement learning! Part 2: Q-learning"
 excerpt: "In this post I describe Q-learning, a popular reinforcement learning algorithm, and how it can be used to "
-date:   2018-04-18 11:31:00
+date:   2020-01-19 11:31:00
 mathjax: true
 comments: true
 ---
@@ -33,4 +33,4 @@ $Q(s,a) = \mathbb{E}[r_t + \gamma * r_{t+1} + \gamma^2 * r_{t+2} ...]$
 
 We want $\gamma$ to be less than 1. In reality, q-learning with a neural network can be pretty unstable, so we prefer a reward that makes use of our own q-value approximator:
 
-$Q(s_t,a_t) = r_t + \gamma * max_{a_{t+1}}(Q_{t+1},a_{t+1})
+$Q(s_t,a_t) = r_t + \gamma * max_{a_{t+1}}(Q_{t+1},a_{t+1})$
