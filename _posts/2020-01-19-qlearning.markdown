@@ -24,5 +24,8 @@ $\pi_\theta(s) = max_a(Q(s,a))$
 Where $Q(s,a)$ is the value of an action $a$ at a state $s$, so $Q(s,a)$ is the value of the state-action pair. The values of state-action pairs are called q-values. We want to build a neural network that maps from states to expected values for each action, so our neural network will approximate $Q(s,a)$. We will test out how q-learning performs on the pole balancing problem before moving to something more complicated.
 
 It might seem that we would want our neural network to predict the sum of rewards like so:
+
 $Q(s,a) = \mathbb{E}[r_t + r_{t+1} + r_{t+2} ...]$
+
 essentially predicting the sum of all rewards throughout the whole training episode.
+
